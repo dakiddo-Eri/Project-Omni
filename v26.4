@@ -1,0 +1,563 @@
+import gc, time, os
+import thumby
+
+# -------------------------
+# CONSTANTS
+# -------------------------
+OS_VERSION = "v26.4"
+
+MODE_HOME = -1
+MODE_TYPE = 0
+MODE_MUSIC = 1
+MODE_NOTES = 2
+MODE_READ = 3
+MODE_INFO = 4
+
+LINE_WIDTH = 10
+VISIBLE_LINES = 3
+LINE_HEIGHT = 8
+BUF_MAX = 128
+
+# -------------------------
+# HELPERS
+# -------------------------
+def clear():
+    thumby.display.fill(0)
+
+def show():
+    thumby.display.update()
+
+def wrap_text(buf, width):
+    return [buf[i:i+width] for i in range(0, len(buf), width)] or [""]
+
+def paginate(text, size=30):
+    return [text[i:i+size] for i in range(0, len(text), size)] or [""]
+
+# -------------------------
+# RICKROLL BOOT ANIMATION + HOUSE LOGO
+# -------------------------
+BOOT_LINES = [
+    "Never gonna",
+    "give you up",
+    "",
+    "Never gonna",
+    "let you down",
+    "",
+    "Booting H26..."
+]
+
+def boot_animation():
+    clear()
+
+    riff = [
+        (659,150),(0,30),(784,150),(0,30),(880,150),(0,30),
+        (784,150),(0,30),(659,150),(0,30),(523,150),(0,30),
+        (587,150),(0,30),(494,300)
+    ]
+
+    for freq, dur in riff:
+        if freq > 0:
+            thumby.audio.play(freq, dur)
+        time.sleep_ms(dur)
+
+    y = 40
+    while y > -len(BOOT_LINES)*8:
+        clear()
+        yy = y
+        for line in BOOT_LINES:
+            thumby.display.drawText(line, 0, yy, 1)
+            yy += 8
+        show()
+        y -= 1
+        time.sleep_ms(40)
+
+    # HOUSE 26 BOOT LOGO (line-only, firmware-safe)
+    clear()
+
+    # Roof (triangle)
+    thumby.display.drawLine(28, 10, 44, 10, 1)
+    thumby.display.drawLine(28, 10, 36, 2, 1)
+    thumby.display.drawLine(44, 10, 36, 2, 1)
+
+    # House body
+    thumby.display.drawLine(28, 10, 28, 28, 1)
+    thumby.display.drawLine(44, 10, 44, 28, 1)
+    thumby.display.drawLine(28, 28, 44, 28, 1)
+
+    # "26" inside
+    thumby.display.drawText("26", 32, 16, 1)
+
+    show()
+    time.sleep_ms(900)
+
+    # -------------------------
+    # NEW TAGLINE (v26.4)
+    # -------------------------
+    clear()
+    thumby.display.drawText("Powered by", 10, 12, 1)
+    thumby.display.drawText("Questionable", 4, 20, 1)
+    thumby.display.drawText("Engineering", 6, 28, 1)
+    show()
+    time.sleep_ms(1500)
+
+
+# -------------------------
+# TYPE / NOTES RENDERER
+# -------------------------
+def draw_text_app(buf, cur_char, status, title):
+    clear()
+
+    thumby.display.drawText(title, 0, 0, 1)
+    thumby.display.drawText("Len:" + str(len(buf)), 0, 8, 1)
+    thumby.display.drawText("Char:" + cur_char, 32, 8, 1)
+
+    lines = wrap_text(buf, LINE_WIDTH)
+    visible = lines[-VISIBLE_LINES:]
+
+    start_y = 40 - (len(visible) * LINE_HEIGHT)
+    y = start_y
+    for line in visible:
+        thumby.display.drawText(line, 0, y, 1)
+        y += LINE_HEIGHT
+
+    if status:
+        thumby.display.drawText(status[:18], 0, 32, 1)
+
+    show()
+
+# -------------------------
+# MUSIC UI
+# -------------------------
+SONG_NAMES = [
+    "Upbeat Run",
+    "Chill Drift",
+    "Boss Echo",
+    "Sky Runner",
+    "Night Drift",
+    "Dungeon Echo",
+    "Pixel Bounce",
+    "Starfall",
+    "Goofy Ahh Beat",
+    "Clown Mode",
+    "Suspicious",
+    "Ohio Anthem",
+    "Sigma Grindset"
+]
+
+def draw_music(selected, offset):
+    clear()
+    thumby.display.drawText("MUSIC", 0, 0, 1)
+
+    for i in range(3):
+        idx = offset + i
+        if idx >= len(SONG_NAMES):
+            break
+        prefix = ">" if idx == selected else " "
+        thumby.display.drawText(prefix + SONG_NAMES[idx][:12], 0, 10 + i*8, 1)
+
+    show()
+
+def loopify(pattern):
+    return pattern * 50
+
+# Original 3
+song1 = loopify([(659,150),(659,150),(0,50),(784,150),(659,150),(523,150),(587,150),(494,300)])
+song2 = loopify([(392,250),(440,250),(494,250),(440,250),(392,250),(330,250),(349,250),(330,250)])
+song3 = loopify([(523,200),(587,200),(622,200),(587,200),(523,200),(466,200),(440,200),(466,200)])
+
+# Mixed Pack
+song4  = loopify([(784,120),(988,120),(1175,120),(988,120),(784,120),(659,120)])
+song5  = loopify([(330,200),(392,200),(349,200),(330,200),(294,200),(262,200)])
+song6  = loopify([(440,150),(415,150),(392,150),(349,200),(392,150),(330,300)])
+song7  = loopify([(523,100),(659,100),(784,100),(659,100),(523,100),(392,100)])
+song8  = loopify([(262,300),(330,300),(392,300),(523,300),(392,300),(330,300)])
+
+# Meme Pack
+song9  = loopify([(523,80),(659,80),(494,80),(784,80),(330,80),(880,80)])
+song10 = loopify([(440,120),(523,120),(440,120),(349,120),(392,120),(330,120)])
+song11 = loopify([(330,200),(0,50),(330,200),(0,50),(294,200),(0,50)])
+song12 = loopify([(784,100),(740,100),(698,100),(659,100),(622,100),(587,100)])
+song13 = loopify([(523,150),(587,150),(622,150),(587,150),(523,150),(466,150)])
+
+SONGS = [
+    song1, song2, song3,
+    song4, song5, song6, song7, song8,
+    song9, song10, song11, song12, song13
+]
+
+def play_song(index):
+    song = SONGS[index]
+    for freq, dur in song:
+        if thumby.buttonB.justPressed():
+            return
+        if freq > 0:
+            thumby.audio.play(freq, dur)
+        time.sleep_ms(dur)
+
+# -------------------------
+# NOTES STORAGE
+# -------------------------
+def save_note(text):
+    files = os.listdir()
+    count = 1
+    while "note_" + str(count) + ".txt" in files:
+        count += 1
+    with open("note_" + str(count) + ".txt", "w") as f:
+        f.write(text)
+
+def delete_note(filename):
+    try:
+        os.remove(filename)
+    except:
+        pass
+
+def list_notes():
+    files = [f for f in os.listdir() if f.startswith("note_")]
+    files.sort()
+    return files
+# -------------------------
+# HOME SCREEN (NEW)
+# -------------------------
+def draw_home_screen():
+    clear()
+
+    # House roof
+    thumby.display.drawLine(28, 4, 44, 4, 1)
+    thumby.display.drawLine(28, 4, 36, 0, 1)
+    thumby.display.drawLine(44, 4, 36, 0, 1)
+
+    # House body
+    thumby.display.drawLine(28, 4, 28, 20, 1)
+    thumby.display.drawLine(44, 4, 44, 20, 1)
+    thumby.display.drawLine(28, 20, 44, 20, 1)
+
+    # "26" inside
+    thumby.display.drawText("26", 32, 10, 1)
+
+    # Text (fits perfectly)
+    thumby.display.drawText("WELCOME TO", 10, 24, 1)
+    thumby.display.drawText(" HOUSE 26", 10, 32, 1)
+
+    show()
+
+# -------------------------
+# READ UI
+# -------------------------
+def draw_read_list(files, selected, delete_mode):
+    clear()
+    thumby.display.drawText("READ", 0, 0, 1)
+
+    if delete_mode:
+        thumby.display.drawText("DELETE?", 0, 10, 1)
+        thumby.display.drawText("Down=YES B=NO", 0, 18, 1)
+        thumby.display.drawText(files[selected][:14], 0, 26, 1)
+        show()
+        return
+
+    if not files:
+        thumby.display.drawText("No notes.", 0, 10, 1)
+    else:
+        start = max(0, min(selected - 1, max(0, len(files) - 3)))
+        for i in range(start, min(start + 3, len(files))):
+            prefix = ">" if i == selected else " "
+            thumby.display.drawText(prefix + files[i][:12], 0, 10 + (i - start)*8, 1)
+    show()
+
+def draw_read_page(title, page_text, page_idx, total_pages):
+    clear()
+    header = (title + " (" + str(page_idx+1) + "/" + str(total_pages) + ")")[:18]
+    thumby.display.drawText(header, 0, 0, 1)
+
+    lines = wrap_text(page_text, LINE_WIDTH)
+    lines = lines[:3]
+
+    y = 10
+    for line in lines:
+        thumby.display.drawText(line, 0, y, 1)
+        y += 8
+
+    thumby.display.drawText("A=Next B=Back", 0, 34, 1)
+    show()
+
+# -------------------------
+# INFO + HARDWARE (UPDATED TO v26.4)
+# -------------------------
+
+LICENSE_TEXT = [
+    "HOUSE 26 LICENSE",
+    "",
+    "This software is",
+    "provided as-is with",
+    "no warranty of any",
+    "kind. You may copy,",
+    "modify, remix, and",
+    "redistribute House 26",
+    "for any purpose.",
+    "",
+    "By using this OS you",
+    "agree not to blame",
+    "the creator if your",
+    "Thumby explodes.",
+]
+
+INFO_TABS = ["LICENSE", "HARDWARE"]
+
+def draw_info_menu(tab_index):
+    clear()
+    thumby.display.drawText("INFO " + OS_VERSION, 0, 0, 1)
+
+    for i, tab in enumerate(INFO_TABS):
+        prefix = ">" if i == tab_index else " "
+        thumby.display.drawText(prefix + tab, 0, 12 + i*10, 1)
+
+    thumby.display.drawText("A=Open", 0, 34, 1)
+    show()
+
+def draw_license_page(page):
+    clear()
+    thumby.display.drawText("LICENSE", 0, 0, 1)
+
+    start = page * 3
+    chunk = LICENSE_TEXT[start:start+3]
+
+    y = 12
+    for line in chunk:
+        thumby.display.drawText(line[:18], 0, y, 1)
+        y += 8
+
+    thumby.display.drawText("A=Next B=Back", 0, 34, 1)
+    show()
+
+def draw_hardware_panel(start_time):
+    clear()
+    thumby.display.drawText("[ HARDWARE ]", 0, 0, 1)
+
+    ram = gc.mem_free()
+
+    stats = os.statvfs("/")
+    free_bytes = stats[0] * stats[3]
+    free_kb = free_bytes // 1024
+
+    ms = time.ticks_ms() - start_time
+    sec = (ms // 1000) % 60
+    mins = (ms // 60000) % 60
+    hrs = (ms // 3600000)
+    uptime = "{:02d}:{:02d}:{:02d}".format(hrs, mins, sec)
+
+    ticks = time.ticks_ms()
+
+    thumby.display.drawText("RAM:  {}B".format(ram), 0, 12, 1)
+    thumby.display.drawText("STOR: {}KB".format(free_kb), 0, 20, 1)
+    thumby.display.drawText("UP:   {}".format(uptime), 0, 28, 1)
+    thumby.display.drawText("TICK: {}".format(ticks), 0, 36, 1)
+
+    show()
+# -------------------------
+# MAIN OS LOOP
+# -------------------------
+def run():
+    boot_animation()
+
+    # Start on HOME SCREEN
+    mode = MODE_HOME
+
+    buf = ""
+    cur_char = "a"
+    status = ""
+
+    music_sel = 0
+    music_offset = 0
+
+    notes = []
+    note_sel = 0
+    delete_mode = False
+    read_pages = []
+    read_page = 0
+    reading = False
+
+    info_tab = 0
+    info_license = False
+    info_hardware = False
+    license_page = 0
+
+    start_time = time.ticks_ms()
+
+    while True:
+        gc.collect()
+
+        # -------------------------
+        # HOME SCREEN MODE
+        # -------------------------
+        if mode == MODE_HOME:
+            draw_home_screen()
+
+            # Press UP to enter OS
+            if thumby.buttonU.justPressed():
+                mode = MODE_TYPE
+            continue
+
+        # -------------------------
+        # MODE CYCLING (UP)
+        # -------------------------
+        if thumby.buttonU.justPressed():
+            mode = (mode + 1) % 5
+            info_license = False
+            info_hardware = False
+            reading = False
+            delete_mode = False
+            status = ""
+
+        # -------------------------
+        # TYPE MODE
+        # -------------------------
+        if mode == MODE_TYPE:
+            draw_text_app(buf, cur_char, status, "TYPE")
+
+            if thumby.buttonA.justPressed() and len(buf) < BUF_MAX:
+                buf += cur_char
+            if thumby.buttonB.justPressed():
+                buf = buf[:-1]
+            if thumby.buttonL.justPressed():
+                cur_char = chr(((ord(cur_char)-97-1) % 26) + 97)
+            if thumby.buttonR.justPressed():
+                cur_char = chr(((ord(cur_char)-97+1) % 26) + 97)
+            if thumby.buttonD.justPressed() and len(buf) < BUF_MAX:
+                buf += " "
+
+        # -------------------------
+        # MUSIC MODE
+        # -------------------------
+        elif mode == MODE_MUSIC:
+
+            if music_sel < music_offset:
+                music_offset = music_sel
+            if music_sel >= music_offset + 3:
+                music_offset = music_sel - 2
+
+            draw_music(music_sel, music_offset)
+
+            if thumby.buttonL.justPressed():
+                music_sel = (music_sel - 1) % len(SONG_NAMES)
+            if thumby.buttonR.justPressed():
+                music_sel = (music_sel + 1) % len(SONG_NAMES)
+            if thumby.buttonA.justPressed():
+                play_song(music_sel)
+
+        # -------------------------
+        # NOTES MODE
+        # -------------------------
+        elif mode == MODE_NOTES:
+            draw_text_app(buf, cur_char, status, "NOTES")
+
+            if thumby.buttonA.justPressed() and len(buf) < 100:
+                buf += cur_char
+            if thumby.buttonB.justPressed():
+                buf = buf[:-1]
+            if thumby.buttonL.justPressed():
+                cur_char = chr(((ord(cur_char)-97-1) % 26) + 97)
+            if thumby.buttonR.justPressed():
+                cur_char = chr(((ord(cur_char)-97+1) % 26) + 97)
+            if thumby.buttonD.justPressed() and len(buf) < 100:
+                buf += " "
+
+            if len(buf) >= 100:
+                save_note(buf)
+                buf = ""
+                status = "Saved."
+
+        # -------------------------
+        # READ MODE
+        # -------------------------
+        elif mode == MODE_READ:
+
+            if not reading and not delete_mode:
+                notes = list_notes()
+                if not notes:
+                    clear()
+                    thumby.display.drawText("No notes.", 0, 0, 1)
+                    show()
+                    continue
+
+                draw_read_list(notes, note_sel, False)
+
+                if thumby.buttonL.justPressed():
+                    note_sel = (note_sel - 1) % len(notes)
+                if thumby.buttonR.justPressed():
+                    note_sel = (note_sel + 1) % len(notes)
+
+                if thumby.buttonD.justPressed():
+                    delete_mode = True
+                    continue
+
+                if thumby.buttonA.justPressed():
+                    with open(notes[note_sel], "r") as f:
+                        text = f.read()
+                    read_pages = paginate(text)
+                    read_page = 0
+                    reading = True
+                    continue
+
+            if delete_mode:
+                draw_read_list(notes, note_sel, True)
+
+                if thumby.buttonD.justPressed():
+                    delete_note(notes[note_sel])
+                    delete_mode = False
+                    reading = False
+                    note_sel = 0
+                    continue
+
+                if thumby.buttonB.justPressed():
+                    delete_mode = False
+                    continue
+
+            if reading:
+                draw_read_page(notes[note_sel], read_pages[read_page], read_page, len(read_pages))
+
+                if thumby.buttonA.justPressed():
+                    read_page = (read_page + 1) % len(read_pages)
+
+                if thumby.buttonB.justPressed():
+                    reading = False
+                    continue
+
+        # -------------------------
+        # INFO MODE
+        # -------------------------
+        elif mode == MODE_INFO:
+
+            if not info_license and not info_hardware:
+                draw_info_menu(info_tab)
+
+                if thumby.buttonU.justPressed():
+                    info_tab = (info_tab - 1) % len(INFO_TABS)
+                if thumby.buttonD.justPressed():
+                    info_tab = (info_tab + 1) % len(INFO_TABS)
+
+                if thumby.buttonA.justPressed():
+                    if INFO_TABS[info_tab] == "LICENSE":
+                        info_license = True
+                        license_page = 0
+                    else:
+                        info_hardware = True
+
+            elif info_license:
+                draw_license_page(license_page)
+
+                if thumby.buttonA.justPressed():
+                    license_page += 1
+                    if license_page * 3 >= len(LICENSE_TEXT):
+                        license_page = 0
+
+                if thumby.buttonB.justPressed():
+                    info_license = False
+
+            elif info_hardware:
+                draw_hardware_panel(start_time)
+
+                if thumby.buttonB.justPressed():
+                    info_hardware = False
+
+# Run OS
+run()
+
