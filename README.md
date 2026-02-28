@@ -11,7 +11,7 @@
 <sub> This can be a starting block for anybody looking to create a more complex OS on minimal devices.
 
 **Limitations**
-The current version of this time this was written caps the framerate at 30 fps due to many button problems, feel free to lift the limit but beware that this cap was implemented to make sure House 26 is stable.
+The current version of this time this was written, caps the framerate at 30 fps due to many button problems, feel free to lift the limit but beware that this cap was implemented to make sure House 26 is stable.
 
 
 **At A First Glance...**
