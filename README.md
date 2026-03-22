@@ -46,3 +46,5 @@ The current version of this time this was written, caps the framerate at 30 fps 
 <sub> The AGPL-3.0 License allows you to distribute, remix, sell, and mass-produce under the condition that you must also provide the source code. Trying to sell this without significant changes is highly unprofitable because the requirement of providing the source code without cost, making sure that only selling significant changes will introduce a profit.
 
 **Information about the License may be inaccaurcate, please check the license to make sure**
+
+Eri & Co
