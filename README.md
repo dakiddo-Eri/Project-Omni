@@ -47,4 +47,4 @@ The current version of this time this was written, caps the framerate at 30 fps 
 
 **Information about the License may be inaccaurcate, please check the license to make sure**
 
-Eri & Co California
+-Eri 
