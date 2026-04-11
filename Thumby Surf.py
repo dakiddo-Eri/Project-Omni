@@ -1,5 +1,5 @@
 # ==============================================
-# ThumbySurf.py  v2.0
+# ThumbySurf.py  v2.3
 # Endless surfing game for the Original Thumby
 # 72x40 monochrome OLED | MicroPython | RP2040
 # ==============================================
@@ -19,14 +19,13 @@ try:
 except:
     pass
 
-# ---- Persistent High Score (Robust) ----
+# ---- Persistent High Score ----
 SAVE_NAME = "ThumbySurf"
 
 def loadHiScore():
     global hiScore
     try:
         thumby.saveData.setName(SAVE_NAME)
-        thumby.saveData.load()
         if thumby.saveData.hasItem("hi"):
             hiScore = int(thumby.saveData.getItem("hi"))
         else:
@@ -39,7 +38,7 @@ def saveHiScore(val):
     hiScore = val
     try:
         thumby.saveData.setName(SAVE_NAME)
-        thumby.saveData.setItem("hi", str(val))
+        thumby.saveData.setItem("hi", val)
         thumby.saveData.save()
     except:
         pass
@@ -76,7 +75,7 @@ OB_H = [4, 6, 8, 3]
 # ---- Wave LUT ----
 WAVE_LUT = [0, 0, 1, 1, 2, 2, 1, 1, 0, 0, -1, -1, -2, -2, -1, -1]
 WAVE_LEN = len(WAVE_LUT)
-
+#Music
 TITLE_TUNE = [
     (659, 6), (784, 6), (880, 6), (988, 12),
     (880, 6), (784, 6), (659, 6), (587, 12),
@@ -95,7 +94,7 @@ def waitBtnRelease():
     while thumby.buttonA.pressed():
         thumby.display.update()
     thumby.buttonA.justPressed()
-
+#Draw
 def drawHeart(x, y):
     thumby.display.blit(HEART, x, y, 5, 5, 0, 0, 0)
 
@@ -128,7 +127,6 @@ def drawObstacle(x, y, kind):
         thumby.display.setPixel(x + 1, y + 1, 0)
 
 def drawBolt(x, y):
-    # 3x5 lightning bolt shape
     thumby.display.setPixel(x + 1, y, 1)
     thumby.display.setPixel(x + 2, y, 1)
     thumby.display.setPixel(x, y + 1, 1)
@@ -141,12 +139,11 @@ def drawBolt(x, y):
     thumby.display.setPixel(x, y + 4, 1)
 
 def drawBoltHUD(x, y):
-    # Tiny 2x3 bolt for HUD
     thumby.display.setPixel(x + 1, y, 1)
     thumby.display.setPixel(x, y + 1, 1)
     thumby.display.setPixel(x + 1, y + 1, 1)
     thumby.display.setPixel(x, y + 2, 1)
-    
+
 MILE_MSG = "You have made it this far, now, share it to the world, take pictures, EVERYTHING, you are one of the only ones having achived this. Now... SAX SAVEN!   "
 
 def showMilestone():
@@ -218,6 +215,7 @@ def titleScreen():
         if thumby.buttonA.justPressed():
             sStop()
             return
+
 def deathFreeze():
     sStop()
     thumby.display.fill(1)
@@ -227,7 +225,7 @@ def deathFreeze():
     thumby.display.drawText("CRASH!", 18, 16, 1)
     thumby.display.update()
     time.sleep(0.6)
-#game over
+#Over
 def gameOverScreen(runScore, bestScore):
     waitBtnRelease()
     isNew = runScore >= bestScore and runScore > 0
@@ -269,7 +267,7 @@ def gameOverScreen(runScore, bestScore):
         if f >= minFrames and thumby.buttonA.justPressed():
             sStop()
             return
-#Main loop/game
+#Main loop
 def runGame():
     global hiScore
 
@@ -435,6 +433,7 @@ def runGame():
                         pY + 1 < oy + oh and
                         pY + pH - 2 > oy):
                         hearts -= 1
+                        sPlay(200, 80)
                         invTimer = 25
 
                         if hearts <= 0:
@@ -527,6 +526,7 @@ def runGame():
 
         thumby.display.update()
         frame += 1
+
 while True:
     titleScreen()
     sc = runGame()
