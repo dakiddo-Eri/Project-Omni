@@ -1,0 +1,5 @@
+Thumby Surf is a game similiar to the offline Edge Surf. It is designed to be minamal and able to run on the OG Thumby.
+
+The objective is to get as far as you can and there will be a counter to track how far you went. You will try to avoid many obstacles. You have 3 hearts and once you have used your 3 hearts, you will be prompted into the end screen with the score you got and your high score. 
+
+DISCLAIMER: ANYBODY WISHING TO TAKE DOWN THE GAME BECAUSE OF COPYRIGHT AND WHATNOT. I WILL GADLY TAKE IT DOWN IF I HAVE TO, PLEASE CREATE AN ISSUE WITH THE TAKE DOWN TAG TO REQUEST A TAKE DOWN OF THE GAME FROM PUBLIC VIEW. (IT CAN ONLY BE TAKEN DOWN DUE TO LEGAL REASONS)
