@@ -1,5 +1,5 @@
-# House 26
-# Version: v26.10.1
+# House 26 OS
+# Version: v26.10
 #Eri is very cool :3
 # ------------------------------------------------------------
 
@@ -26,6 +26,9 @@ BUF_MAX        = 128
 FRAME_MS       = 33   # ~30 FPS
 GC_INTERVAL_MS = 2000
 
+# -------------------------
+# INPUT
+# -------------------------
 def update_input():
     thumby.buttonA.update()
     thumby.buttonB.update()
@@ -44,6 +47,9 @@ def any_just_pressed():
         thumby.buttonR.justPressed()
     )
 
+# -------------------------
+# DISPLAY HELPERS
+# -------------------------
 def clear():
     thumby.display.fill(0)
 
@@ -183,6 +189,9 @@ def draw_home():
         home_scroll_x = 72
     show()
 
+# -------------------------
+# MUSIC + BACKGROUND ENGINE
+# -------------------------
 SONG_NAMES = [
     "Upbeat Run","Chill Drift","Boss Echo","Sky Runner",
     "Night Drift","Dungeon Echo","Pixel Bounce","Starfall",
@@ -346,7 +355,7 @@ SONGS = [
 music_playing       = False
 music_song_index    = 0
 music_note_index    = 0
-music_note_remaining= 0  # ms
+music_note_remaining= 0
 
 def music_start(idx):
     global music_playing, music_song_index, music_note_index, music_note_remaining
@@ -379,6 +388,9 @@ def music_tick(dt_ms):
         thumby.audio.play(freq, dur)
     music_note_remaining = dur
 
+# -------------------------
+# NOTES / TEXT
+# -------------------------
 def save_note(text):
     files = os.listdir()
     count = 1
@@ -414,6 +426,9 @@ def draw_text_app(buf, cur_char, status, title):
         thumby.display.drawText(status[:18], 0, 32, 1)
     show()
 
+# -------------------------
+# READ
+# -------------------------
 def draw_read_list(files, selected, delete_mode):
     clear()
     thumby.display.drawText("READ", 0, 0, 1)
@@ -444,6 +459,9 @@ def draw_read_page(title, page_text, page_idx, total_pages):
     thumby.display.drawText("A=Next B=Back", 0, 34, 1)
     show()
 
+# -------------------------
+# INFO
+# -------------------------
 LICENSE_TEXT = [
     "HOUSE 26 LICENSE","",
     "This software is","provided as-is with",
@@ -529,6 +547,9 @@ def handle_info_mode(info_tab, info_license, info_hardware, license_page, start_
 
     return info_tab, info_license, info_hardware, license_page
 
+# -------------------------
+# CALCULATOR
+# -------------------------
 def gcd(a, b):
     if a < 0:
         a = -a
@@ -1125,6 +1146,9 @@ def draw_ui(page, cx, cy, expr, result):
     except:
         pass
 
+# -------------------------
+# DRAW
+# -------------------------
 DRAW_TOOLS       = ["PAINT", "ERASE"]
 DRAW_TOOL_PAINT  = 0
 DRAW_TOOL_ERASE  = 1
@@ -1199,6 +1223,9 @@ def full_redraw_canvas(canvas, cx, cy):
     draw_cursor_outline(cx, cy)
     show()
 
+# -------------------------
+# GALLERY
+# -------------------------
 def save_drawing(canvas):
     files = os.listdir()
     count = 1
@@ -1260,6 +1287,9 @@ def draw_gallery_view(filename):
     thumby.display.drawText(filename[:10], 0, 0, 1)
     show()
 
+# -------------------------
+# MAIN LOOP
+# -------------------------
 def run():
     global music_playing, music_song_index
 
@@ -1267,13 +1297,16 @@ def run():
 
     mode = MODE_HOME
 
+    # NOTES
     buf       = ""
     cur_char  = "a"
     status    = ""
 
+    # MUSIC
     music_sel    = 0
     music_offset = 0
 
+    # READ
     notes        = []
     note_sel     = 0
     delete_mode  = False
@@ -1281,11 +1314,13 @@ def run():
     read_page    = 0
     reading      = False
 
+    # INFO
     info_tab      = 0
     info_license  = False
     info_hardware = False
     license_page  = 0
 
+    # CALCULATOR
     page = 0
     cx = 0
     cy = 0
@@ -1294,6 +1329,7 @@ def run():
     last_answer = '0'
     ab_lock = 0
 
+    # DRAW
     draw_canvas_data = new_canvas()
     draw_in_toolbar  = True
     draw_tool        = DRAW_TOOL_PAINT
@@ -1303,6 +1339,7 @@ def run():
     prev_cy          = draw_cy
     draw_dirty       = False
 
+    # GALLERY
     gallery_files       = []
     gallery_sel         = 0
     gallery_viewing     = False
@@ -1322,11 +1359,13 @@ def run():
 
         music_tick(FRAME_MS)
 
+        # HOME
         if mode == MODE_HOME:
             draw_home()
             if thumby.buttonU.justPressed():
                 mode = MODE_MUSIC
 
+        # GLOBAL APP CYCLING (except when in draw canvas)
         elif not (mode == MODE_DRAW and not draw_in_toolbar):
             if thumby.buttonU.justPressed():
                 mode += 1
@@ -1340,6 +1379,7 @@ def run():
                 gallery_delete_mode = False
                 status            = ""
 
+        # MUSIC
         if mode == MODE_MUSIC:
             if music_sel < music_offset:
                 music_offset = music_sel
@@ -1439,6 +1479,7 @@ def run():
                 if cy > 2:
                     cy = 0
 
+
             if thumby.buttonA.justPressed() and (not thumby.buttonB.pressed()):
                 expr_ref = [expr]
                 result_ref = [result]
@@ -1474,13 +1515,13 @@ def run():
             else:
                 moved = False
                 if thumby.buttonU.justPressed():
-                    draw_cy -= 1; moved = True
+                    draw_cy -= 2; moved = True
                 if thumby.buttonD.justPressed():
-                    draw_cy += 1; moved = True
+                    draw_cy += 2; moved = True
                 if thumby.buttonL.justPressed():
-                    draw_cx -= 1; moved = True
+                    draw_cx -= 2; moved = True
                 if thumby.buttonR.justPressed():
-                    draw_cx += 1; moved = True
+                    draw_cx += 2; moved = True
                 draw_cx = clamp(draw_cx, CANVAS_X0, CANVAS_X1 - 1)
                 draw_cy = clamp(draw_cy, CANVAS_Y0, CANVAS_Y1 - 1)
                 if thumby.buttonA.justPressed():
