@@ -7,7 +7,7 @@ import gc, time, os, random
 import thumby
 import math
 
-OS_VERSION = "v26.10"
+OS_VERSION = "v26.11"
 
 MODE_HOME   = -1
 MODE_MUSIC  = 0
