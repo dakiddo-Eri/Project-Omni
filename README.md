@@ -7,9 +7,9 @@ Project Omni
 
 Setting up your tool kit
 
-<sub> Thumby Random is a tool kit of optional assets for you to use. Kitmen is an exeption of being unfinished. One of the assets is a benchmark, you can use that benchmark to measure your Thumby's power. Results may be similiar for your device every run. Every release of House 26 OS may have varying controls, use the README to help guide you through House 26. Releases are pushed through as the most stable versions and ready for rapid deployment and assessment. Released versions have been throughly tested but may still contain some bugs. There are a few exeptional bugs which are intentional for certain reasons.
+<sub> Thumby Random is a tool kit of optional assets for you to use. Kitmen is an exeption of being unfinished. One of the assets is a benchmark, you can use that benchmark to measure your Thumby's power. Results may be similiar for your device every run. Every release of House 26 OS may have varying controls, use the README to help guide you through House 26. Releases are pushed through as the most stable versions and ready for rapid deployment and assessment. A new item in the tool kit is the Thumby MidiPlayer which can play .mid songs. Songs will have "clicking" notes due to some limitations and variety of songs. The songs will sound familiar as a chiptune and obviosly not in high quality like your 1,000 dollar phones. Released versions have been throughly tested but may still contain some bugs. There are a few exeptional bugs which are intentional for certain reasons.
 
-**Key Features**
+**Key Features of House 26**
 
 <sub> This application involves a very non-complex core which can easily be modified by anybody.
 
