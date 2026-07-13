@@ -1,4 +1,4 @@
- MidiPlayer — Thumby polysynth MIDI player
+#MidiPlayer — Thumby polysynth MIDI player
 # Put .mid files in /Games/MidiPlayer/songs/
 # Made by very cool Eri
 # Special thanks to transistortester
