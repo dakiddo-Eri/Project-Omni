@@ -1,53 +1,70 @@
-Project Omni
+# Project Omni 🌍
 
-<sub>  Here at Project Omni, we strive to create open-source software and Operating Systems for various micro-hardware. This could range from a Thumby all the way to a Raspbery Pi. There are thousands of devices out in the world that Project Omni can help create the base code for everyone to use, customize, and distribute to create a bigger foundation, without starting from scratch.
--Project Omni: Everywhere, Everything, Open.
+> **Omni: Everywhere, Everything, Open.**
 
-<sub> The Thumby is recomended to run House 26, other hardware other than the Thumby may glitch since this software is only built to run naitively on the Thumby. If anyone needs me to make House 26 run natively on another device, DM @pikachu1260 on Discord or comment on this project. 
+Project Omni is an open-source operating system development initiative dedicated to creating lightweight, efficient OS solutions for micro-hardware devices—from the Thumby to the Raspberry Pi and beyond.
 
-Setting up your tool kit
+## 📋 About
 
-<sub> Thumby Random is a tool kit of optional assets for you to use. Kitmen is an exeption of being unfinished. One of the assets is a benchmark, you can use that benchmark to measure your Thumby's power. Results may be similiar for your device every run. Every release of House 26 OS may have varying controls, use the README to help guide you through House 26. Releases are pushed through as the most stable versions and ready for rapid deployment and assessment. A new item in the tool kit is the Thumby MidiPlayer which can play .mid songs. Songs will have "clicking" notes due to some limitations and variety of songs. The songs will sound familiar as a chiptune and obviosly not in high quality like your 1,000 dollar phones. Released versions have been throughly tested but may still contain some bugs. There are a few exeptional bugs which are intentional for certain reasons.
+Project Omni develops operating systems optimized for minimal hardware constraints. Our flagship OS, **House 26**, is a beautifully designed, non-complex core system that runs natively on the Thumby and serves as an excellent foundation for developers looking to create more sophisticated systems for micro-devices.
 
-**Key Features of House 26**
+# I've decided to discontinue support for House 26 OS for a new system, introducing........Hontang OS!!!
+**Don't mind the top debug bar as taht is for development**
 
-<sub> This application involves a very non-complex core which can easily be modified by anybody.
+**The system currently is in development, what you see in these photos may not be the actual release product**
 
-<sub> This can be a starting block for anybody looking to create a more complex OS on minimal devices.
+<img width="288" height="160" alt="thumby_emulator_screenshot" src="https://github.com/user-attachments/assets/2b0978f9-001b-4fe3-9a49-a382de7111a8" />
 
-**Limitations**
+With the new cursor system, and new keyboard system, you don't have to scroll through a whole list, you can just go across the keyboard!
 
-The current version of this time this was written, caps the framerate at 30 fps due to many button problems, feel free to lift the limit but beware that this cap was implemented to make sure House 26 is stable.
+<img width="288" height="160" alt="thumby_emulator_screenshot (1)" src="https://github.com/user-attachments/assets/d6eb48ca-9d8b-4d61-be82-df5b9d27a3ab" />
+
+Introducing, the Tab Navigation UI, with the new home screen to select from your apps, you can quickly scroll through apps!
+
+<img width="288" height="160" alt="thumby_emulator_screenshot (2)" src="https://github.com/user-attachments/assets/35d37962-8cc0-4984-9968-d2fed49730fe" />
+
+The ThumbWeb engine will power you through your searches, using your computer as the host, you can now browse the internet on this text-based browser.
+
+<img width="288" height="160" alt="thumby_emulator_screenshot (3)" src="https://github.com/user-attachments/assets/b849812a-08b4-4928-9da9-8db2b4f17e27" />
+
+With the new files app, you can now view all your files directly on your Thumby.
+
+<img width="288" height="160" alt="thumby_emulator_screenshot (4)" src="https://github.com/user-attachments/assets/04d6c906-2308-46e8-a500-8d3788513b65" />
+
+The new Settings app will allow you to customize Hontang OS as you like, no need to go back to the TinyCircuits menu to change the brightness, set your cursor speed to your liking, and change the max FPS to cater your needs.
+
+These are just some of the core apps you will find, on release day, there will be a special special suprise.
+
+## Release day: To be dated
 
 
-**At A First Glance...**
 
-<img width="150" height="110" alt="image" src="https://github.com/user-attachments/assets/4687ce7f-94f7-4239-8072-3eb4fb87c294" />
 
-<sub> Some lettering may be cut off based on the device screen size but this is an info pannel from a Thumby Emulator running House 26.
+## 🔄 Continuous Development
 
-<img width="148" height="91" alt="image" src="https://github.com/user-attachments/assets/d42539d5-3b14-4f66-9c68-c545a7431410" />
+Our software is actively maintained with regular improvements. The codebase evolves to:
+- Fix newly discovered bugs
+- Improve overall functionality
+- Optimize performance
+- Add new features
 
-<sub> House 26 offers a varierty of 1-bit music with background playback on the OS. Navigate using left/right on the d-pad to scroll the list.
+**Expect frequent changes** as we refine the system.
 
-<img width="146" height="99" alt="image" src="https://github.com/user-attachments/assets/4e773d97-dab5-423e-bcfa-7e000ebcebd7" />
+## 💡 Why Project Omni?
 
-<sub> This is the Info tab, find out what version of House 26 you're on and check hardware plus license. Select from the 2 tabs using the down button and A to select your selection. Some newer versions of House 26 may use left/right instead to select and down to select your selection.
+- **Minimal Hardware Philosophy**: Prove that great OS design works at any scale
+- **Open Source**: Community-driven development and contributions welcome
+- **Practical Applications**: Deploy to your devices quickly
 
-<img width="146" height="89" alt="image" src="https://github.com/user-attachments/assets/65799a9c-ce85-46d4-bf89-8c1d5506702d" /> <img width="143" height="90" alt="image" src="https://github.com/user-attachments/assets/b08996c9-91a7-4d40-a843-61165650fcd8" />
+## 📞 Support & Contribution
 
-<sub> Draw app + Gallery will help you express your imagination with pixel art. Left/right on d-pad to select the 2 options, Paint option and Eraser option.
+Have ideas? Found bugs? Want to contribute?
+- 📧 Contact: pikachu1260 on Discord
+- 🐛 Issues: Report bugs and feature requests
+- 🤝 Pull Requests: We welcome contributions!
 
-<img width="148" height="102" alt="image" src="https://github.com/user-attachments/assets/219c8c1c-eedd-4aad-aee9-23845908dac0" /> <img width="144" height="95" alt="image" src="https://github.com/user-attachments/assets/9bca23a2-2ded-4d5a-aabf-15e062c5f33a" />
+---
 
-<sub> Notes app + Notes view app will help you express what you think down in words. Use left/right on d-pad to scroll through alphabet. Down-button on d-pad to use space/A-button to use the currently selected letter/B-button to erase the current letter.
+**Project Omni** — Making micro-OS development accessible to everyone.
 
-**How much of the OS can I edit?**
-
-<sub> The AGPL-3.0 License allows you to distribute, remix, sell, and mass-produce under the condition that you must also provide the source code. Trying to sell this without significant changes is highly unprofitable because the requirement of providing the source code without cost, making sure that only selling significant changes will introduce a profit.
-
-**Information about the License may be inaccaurcate, please check the license to make sure**
-
-<sub> Apps are being constantly worked on to improve House 26 for the better. Sudden changes may occur to adapt new-found bugs or just to improve House 26 in general.
-
--Eri 
+*Created with ❤️ by Eri*
