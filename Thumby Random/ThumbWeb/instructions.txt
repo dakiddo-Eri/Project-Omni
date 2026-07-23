@@ -27,7 +27,7 @@ Install using apt: (Debian/Ubuntu/Raspberry Pi OS)
 - sudo apt install python3-bs4 python3-requests python3-serial
 
 OR using pip if you prefer: (!!!This command bypasses the system warnings and as the name implies, could break you system, low chance though so yeah)
-pip3 install beautifulsoup4 requests pyserial --break-system-packages
+pip install beautifulsoup4 requests pyserial --break-system-packages
 
 ======= Instalation Process =======
 
