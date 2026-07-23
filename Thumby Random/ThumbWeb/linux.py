@@ -2,45 +2,35 @@ import serial
 import serial.tools.list_ports
 import time
 import requests
+from requests.exceptions import Timeout, ConnectionError
 from bs4 import BeautifulSoup
 import textwrap
 import re
 from urllib.parse import urljoin
 
-BAUD_RATE = 115200 #porting on linux is automatic
+BAUD_RATE = 115200
 
 def find_thumby_port():
-    """Scrapes system hardware to find the Thumby on Linux."""
     ports = list(serial.tools.list_ports.comports())
-    
-    # 1. Look for Raspberry Pi RP2040 hardware signature
     for p in ports:
         if p.vid == 0x2E8A: 
-            print(f"🎯 Found Thumby via hardware ID: {p.device}")
             return p.device
-            
-    # 2. Fallback: Search for standard Linux USB modem ports (/dev/ttyACM*)
     for p in ports:
         if "ttyACM" in p.device or "ttyUSB" in p.device:
-            print(f"⚠️ Guessing Linux port: {p.device}")
             return p.device
-            
     return None
 
 def process_search(query):
     url = f"https://html.duckduckgo.com/html/?q={query}"
     headers = {'User-Agent': 'Mozilla/5.0'}
     try:
-        response = requests.get(url, headers=headers, timeout=8)
+        response = requests.get(url, headers=headers, timeout=20)
         soup = BeautifulSoup(response.text, 'html.parser')
         
         titles = soup.find_all('a', class_='result__url', limit=5)
         snippets = soup.find_all('a', class_='result__snippet', limit=5)
         
-        out = [
-            "T:=== RESULTS ===",
-            "T:-------------"
-        ]
+        out = ["T:RESULTS", "T:-------------"]
         
         for i in range(min(len(titles), len(snippets))):
             raw_title = titles[i].get_text(strip=True)[:24]
@@ -59,19 +49,23 @@ def process_search(query):
             out.append("T:-------------")
             
         return out
+    except Timeout:
+        return ["T:ERROR", "T:Connection", "T:Timed Out!", "T:-----------", "T:Press B to", "T:go back."]
+    except ConnectionError:
+        return ["T:ERROR", "T:No Internet", "T:Connection!", "T:-----------", "T:Press B to", "T:go back."]
     except Exception as e:
-        return [f"T:Search Error", f"T:{str(e)[:12]}"]
+        return ["T:ERROR", "T:Search Failed", f"T:{str(e)[:12]}", "T:Press B."]
 
 def process_webpage(url):
     headers = {'User-Agent': 'Mozilla/5.0'}
     try:
-        response = requests.get(url, headers=headers, timeout=8)
+        response = requests.get(url, headers=headers, timeout=20)
         soup = BeautifulSoup(response.text, 'html.parser')
         
         for junk in soup(['script', 'style', 'nav', 'footer', 'header', 'aside', 'form', 'button', 'svg', 'img', 'iframe']):
             junk.decompose()
             
-        out = ["T:BROWSER"]
+        out = ["T:BROWSER", "T:-------------"]
         line_count = 0
         max_lines = 150
         
@@ -105,25 +99,28 @@ def process_webpage(url):
             out.append("T:No text found.")
             
         return out[:max_lines]
+    except Timeout:
+        return ["T:ERROR", "T:Site is too", "T:slow to load.", "T:-----------", "T:Press B to", "T:go back."]
+    except ConnectionError:
+        return ["T:ERROR", "T:No Internet", "T:Connection!", "T:-----------", "T:Press B to", "T:go back."]
     except Exception as e:
-        return [f"T:Web Error", f"T:{str(e)[:12]}"]
+        return ["T:ERROR", "T:Page Failed", f"T:{str(e)[:12]}", "T:Press B."]
 
-#bridge
 ser = None
 while True:
     if ser is None:
         target_port = find_thumby_port()
         if target_port:
-            print(f"🔌 Connecting to Thumby on {target_port}...")
+            print(f"Connecting on {target_port}...")
             try:
                 ser = serial.Serial(target_port, BAUD_RATE, timeout=0.1)
-                print("✅ Web Link Established!")
+                print("Connected!")
             except Exception as e:
-                print(f"❌ Connection failed: {e}")
+                print(f"Failed: {e}")
                 time.sleep(2)
                 continue
         else:
-            print("🔍 Searching for Thumby... (Is it plugged in and turned on?)")
+            print("Searching for Thumby...")
             time.sleep(2)
             continue
 
@@ -131,7 +128,7 @@ while True:
         if ser.in_waiting > 0:
             raw_req = ser.readline().decode('utf-8', errors='ignore').strip()
             if raw_req:
-                print(f"📡 Request Received: {raw_req}")
+                print(f"Request: {raw_req}")
                 
                 payload_lines = []
                 if raw_req.startswith("SEARCH:"):
@@ -146,10 +143,10 @@ while True:
                     for payload_line in payload_lines:
                         ser.write((payload_line + "\n").encode('utf-8'))
                         time.sleep(0.01)
-                    print("✅ Page updated.")
+                    print("Page updated.")
                     
     except (serial.SerialException, OSError):
-        print("❌ Connection lost. Reconnecting in 2s...")
+        print("Connection lost.")
         if ser:
             try: ser.close()
             except: pass
