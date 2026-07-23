@@ -1,35 +1,36 @@
 import serial
+import serial.tools.list_ports
 import time
-import glob
 import requests
+from requests.exceptions import Timeout, ConnectionError
 from bs4 import BeautifulSoup
 import textwrap
 import re
 from urllib.parse import urljoin
 
-MANUAL_PORT = '/dev/cu.usbmodem14301' #!!!put your port here!!!
 BAUD_RATE = 115200
 
 def find_thumby_port():
-    ports = glob.glob('/dev/cu.usbmodem*')
-    return ports[0] if ports else MANUAL_PORT
+    ports = list(serial.tools.list_ports.comports())
+    for p in ports:
+        if p.vid == 0x2E8A: 
+            return p.device
+    for p in ports:
+        if "usbmodem" in p.device or "ttyACM" in p.device or "ttyUSB" in p.device:
+            return p.device
+    return None
 
 def process_search(query):
-    """Fetches search engine results formatted strictly as lightweight text structures."""
     url = f"https://html.duckduckgo.com/html/?q={query}"
     headers = {'User-Agent': 'Mozilla/5.0'}
-    
     try:
-        response = requests.get(url, headers=headers, timeout=8)
+        response = requests.get(url, headers=headers, timeout=20)
         soup = BeautifulSoup(response.text, 'html.parser')
         
         titles = soup.find_all('a', class_='result__url', limit=5)
         snippets = soup.find_all('a', class_='result__snippet', limit=5)
         
-        out = [
-            "T:=== RESULTS ===",
-            "T:-------------"
-        ]
+        out = ["T:RESULTS", "T:-------------"]
         
         for i in range(min(len(titles), len(snippets))):
             raw_title = titles[i].get_text(strip=True)[:24]
@@ -41,28 +42,30 @@ def process_search(query):
                 link = requests.utils.unquote(link)
                 
             out.append(f"T:🔗 {raw_title}")
-            out.append(f"L:{link}") # Associate link with title line
+            out.append(f"L:{link}")
             
             for line in textwrap.wrap(desc, width=12):
                 out.append(f"T:{line}")
             out.append("T:-------------")
             
         return out
+    except Timeout:
+        return ["T:ERROR", "T:Connection", "T:Timed Out!", "T:-----------", "T:Press B to", "T:go back."]
+    except ConnectionError:
+        return ["T:ERROR", "T:No Internet", "T:Connection!", "T:-----------", "T:Press B to", "T:go back."]
     except Exception as e:
-        return [f"T:Search Error", f"T:{str(e)[:12]}"]
+        return ["T:ERROR", "T:Search Failed", f"T:{str(e)[:12]}", "T:Press B."]
 
 def process_webpage(url):
-    """Scrapes raw web page text and nested hyperlinks sequentially."""
-    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'}
+    headers = {'User-Agent': 'Mozilla/5.0'}
     try:
-        response = requests.get(url, headers=headers, timeout=8)
+        response = requests.get(url, headers=headers, timeout=20)
         soup = BeautifulSoup(response.text, 'html.parser')
         
         for junk in soup(['script', 'style', 'nav', 'footer', 'header', 'aside', 'form', 'button', 'svg', 'img', 'iframe']):
             junk.decompose()
             
-        out = ["T:BROWSER"]
-        
+        out = ["T:BROWSER", "T:-------------"]
         line_count = 0
         max_lines = 150
         
@@ -84,7 +87,7 @@ def process_webpage(url):
                         wrapped = textwrap.wrap(f"LNK:{text}", width=12)
                         for w_line in wrapped:
                             out.append(f"T:{w_line}")
-                            out.append(f"L:{resolved_url}") # Map link data
+                            out.append(f"L:{resolved_url}")
                             line_count += 1
             else:
                 wrapped = textwrap.wrap(text, width=12)
@@ -96,27 +99,36 @@ def process_webpage(url):
             out.append("T:No text found.")
             
         return out[:max_lines]
+    except Timeout:
+        return ["T:ERROR", "T:Site is too", "T:slow to load.", "T:-----------", "T:Press B to", "T:go back."]
+    except ConnectionError:
+        return ["T:ERROR", "T:No Internet", "T:Connection!", "T:-----------", "T:Press B to", "T:go back."]
     except Exception as e:
-        return [f"T:Web Error", f"T:{str(e)[:12]}"]
+        return ["T:ERROR", "T:Page Failed", f"T:{str(e)[:12]}", "T:Press B."]
 
-#bridge
 ser = None
 while True:
     if ser is None:
         target_port = find_thumby_port()
-        print(f"🔌 Listening for Thumby text terminal on {target_port}...")
-        try:
-            ser = serial.Serial(target_port, BAUD_RATE, timeout=0.1)
-            print("✅ Web Link Established!")
-        except Exception:
-            time.sleep(1)
+        if target_port:
+            print(f"Connecting on {target_port}...")
+            try:
+                ser = serial.Serial(target_port, BAUD_RATE, timeout=0.1)
+                print("Connected!")
+            except Exception as e:
+                print(f"Failed: {e}")
+                time.sleep(2)
+                continue
+        else:
+            print("Searching for Thumby...")
+            time.sleep(2)
             continue
 
     try:
         if ser.in_waiting > 0:
             raw_req = ser.readline().decode('utf-8', errors='ignore').strip()
             if raw_req:
-                print(f"📡 Request Received: {raw_req}")
+                print(f"Request: {raw_req}")
                 
                 payload_lines = []
                 if raw_req.startswith("SEARCH:"):
@@ -131,12 +143,12 @@ while True:
                     for payload_line in payload_lines:
                         ser.write((payload_line + "\n").encode('utf-8'))
                         time.sleep(0.01)
-                    print("✅ Page updated.")
+                    print("Page updated.")
                     
     except (serial.SerialException, OSError):
-        print("❌ Interface dropped. Reconnecting...")
+        print("Connection lost.")
         if ser:
             try: ser.close()
             except: pass
         ser = None
-        time.sleep(1)
+        time.sleep(2)
