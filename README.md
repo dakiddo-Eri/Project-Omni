@@ -52,7 +52,7 @@ Our software is actively maintained with regular improvements. The codebase evol
 
 ## 💡 Why Project Omni?
 
-- **Minimal Hardware Philosophy**: Prove that great OS design works at any scale
+- **Minimal Hardware Philosophy**: Prove that great software design works at any scale
 - **Open Source**: Community-driven development and contributions welcome
 - **Practical Applications**: Deploy to your devices quickly
 
