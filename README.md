@@ -67,4 +67,7 @@ Have ideas? Found bugs? Want to contribute?
 
 **Project Omni** — Making micro-OS development accessible to everyone.
 
+If you ever need a visual guide on installing things on here or anything like that, you can visit 'https://www.youtube.com/@EriZeDud21' to find some guides and other random stuff.
+
+
 *Created with ❤️ by Eri*
