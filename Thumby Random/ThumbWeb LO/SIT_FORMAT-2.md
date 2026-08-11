@@ -14,6 +14,7 @@ it in `/Sites/` on the device.
 | `L:HOME` | Jumps straight back to the home page, same as if history were empty. |
 | `L:BACK` | Same as pressing the B button — pops one page off history (or goes home if there's nothing to pop). |
 | `# comment` | Ignored. Use freely for notes. |
+| `A: <frame>` | Animation, you make one frame separated by pipes and another frame which switched from one frame to another|
 | *(blank line)* | Ignored. |
 | *(anything else)* | Ignored. Reserved for future directives — old engines skip lines they don't understand instead of breaking. |
 
@@ -30,28 +31,12 @@ T:Open Gooogle
 L:google.sit
 ```
 
-## Search: `index.sit`
-
-There's no live search engine offline, so `/Sites/index.sit` is a
-hand-written keyword map the engine scans on every search: 
-(UPDATE, theres live search now, just ignore index its deleted)
-
+##Example: Animation
 ```
-K:<Label>=<keyword1>|<keyword2>|...=<target.sit>
+A:  (o<     |  (o>     
+A: ~(== )   | ~( ==)   
+A:  J  J    |   L  L
 ```
-
-Example:
-
-```
-# index.sit - search keyword map
-K:Gooogle Home=google|gooogle|search engine=google.sit
-K:Gooogle Wiki=wiki|wikipedia|encyclopedia=wiki.sit
-```
-
-A search matches if the typed query is a substring of a keyword, or a
-keyword is a substring of the query — so partial and slightly-off
-queries still hit. The first 6 matches become a results page
-automatically; no matches shows "No results for".
 
 ## Layout conventions
 
