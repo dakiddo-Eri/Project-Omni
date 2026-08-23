@@ -62,7 +62,8 @@ Have ideas? Found bugs? Want to contribute?
 - 📧 Contact: pikachu1260 on Discord
 - 🐛 Issues: Report bugs and feature requests
 - 🤝 Pull Requests: We welcome contributions!
-
+- 🤑 Donations: Send Ducos to dakiddo 
+https://duinocoin.com
 ---
 
 **Project Omni** — Great design at any scale
