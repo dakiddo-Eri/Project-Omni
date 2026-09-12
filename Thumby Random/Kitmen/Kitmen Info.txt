@@ -1,6 +1,0 @@
-Kitmen is a game where you catch creatures called "Kitmen" using rocks. Rocks can be obtained by capturing Kitmen. There are mini-bosses, called Eviler, Evilers can be found on fully white tiles and going on the tiles and pressing "A" on the Thumby. There are currently various Kitmen that you can capture but before we get into that, there is an item you also get every time you capture a Kitmen, heals. Heals can heal you during battle by pressing "B" on the Thumby. All attacks on Kitmen are currently in a random range. The rarest Kitmen you can obtain is "Eri" with a 0.01% chance of appearing and to make it even harder, Eri has insanely powerful abilities that makes him reqiure a heal for every hit he makes forcing you to have an excess amount of heals. Basically, the goal is to collect all the Kitmen, especially the harder ones, (like Eri) and yeah. I might add a final boss fight if you somehow capture all the Kitmens but thats the future.
-
-DISCLAIMER: THIS GAME DOES NOT INTEND TO COPY ANY GAME AND HAS VERY DIFFERENT MECAHNICS THAN OTHER ALREADY CURRENTLY EXSISTING OF 3/18/2026. IF THIS GAME INSULTS ANY ALREADY EXISTING GAME, I WILL GADLY TAKE IT DOWN FROM PUBLIC VIEW.
-
-
-Designed by Eri & Co California
