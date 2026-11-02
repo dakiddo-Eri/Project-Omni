@@ -1,17 +1,9 @@
-#Designed by Eri & Co California
-# =========================
-# PART 1 — CORE / MAP / PLAYER / SPRITES / KITMEN / BATTLE STATE
-# =========================
-
 import thumby
 import time
 import random
 
 thumby.display.setFPS(30)
 
-# -------------------------
-# CONSTANTS / BUTTONS
-# -------------------------
 TILE = 8
 SCREEN_W = 72
 SCREEN_H = 40
@@ -37,9 +29,6 @@ def make_sprite(rows):
 def blit8(sprite, x, y):
     thumby.display.blit(sprite, x, y, 8, 8, 0, 0, 0)
 
-# -------------------------
-# PLAYER SPRITES
-# -------------------------
 PLAYER_IDLE = make_sprite([
     0b00111100,
     0b01111110,
@@ -84,25 +73,18 @@ PLAYER_WALK2 = make_sprite([
     0b00100100
 ])
 
-# -------------------------
-# GAME STATE
-# -------------------------
 GAME_STATE = "intro"
-MENU_STATE = "none"   # "none", "main", "items", "book", "save", "items_select"
+MENU_STATE = "none"
 menu_index = 0
 book_scroll = 0
 last_encounter_time = -20000
 
 intro_index = 0
-intro_mode = "main"   # "main" or "confirm"
+intro_mode = "main"
 starter_index = 0
 
-# Eviler global state
 evilers_defeated = 0
 
-# -------------------------
-# MAP
-# -------------------------
 MAP_W = 64
 MAP_H = 64
 MAP_DATA = bytearray(MAP_W * MAP_H)
@@ -150,9 +132,6 @@ def update_camera():
     camera["x"] = clamp(player["x"] + 4 - SCREEN_W//2, 0, MAP_W*TILE - SCREEN_W)
     camera["y"] = clamp(player["y"] + 4 - SCREEN_H//2, 0, MAP_H*TILE - SCREEN_H)
 
-# -------------------------
-# EVILER BLOCKS
-# -------------------------
 eviler_blocks = [
     {"x": 20, "y": 20},
     {"x": 40, "y": 10},
@@ -188,18 +167,15 @@ def check_eviler_trigger():
             return i
     return -1
 
-# -------------------------
-# WORLD RENDER
-# -------------------------
 def draw_tile(t, sx, sy):
     if t == 1:  # grass
         thumby.display.drawRectangle(sx, sy, TILE, TILE, 1)
-    elif t == 2:  # tall grass
+    elif t == 2:
         thumby.display.drawRectangle(sx, sy, TILE, TILE, 1)
         thumby.display.drawFilledRectangle(sx+1, sy+1, 1, 1, 1)
         thumby.display.drawFilledRectangle(sx+3, sy+2, 1, 1, 1)
         thumby.display.drawFilledRectangle(sx+5, sy+1, 1, 1, 1)
-    elif t == 3:  # path
+    elif t == 3:
         for yy in range(0, TILE, 2):
             for xx in range(0, TILE, 2):
                 thumby.display.drawFilledRectangle(sx+xx, sy+yy, 1, 1, 1)
@@ -239,10 +215,6 @@ def update_blink():
             player["blink_state"] = "open"
             player["blink_timer"] = 0
 
-# -------------------------
-# KITMEN SPRITES (16x16)
-# -------------------------
-# Mankey - small monkey-ish
 KIT_MA = bytearray([
 0b00000111,0b00000000,
 0b00011111,0b10000000,
@@ -262,7 +234,6 @@ KIT_MA = bytearray([
 0b00000111,0b00000000
 ])
 
-# Banna - chunky banana tank
 KIT_BA = bytearray([
 0b00000011,0b00000000,
 0b00000111,0b10000000,
@@ -282,7 +253,6 @@ KIT_BA = bytearray([
 0b00000111,0b10000000
 ])
 
-# Choopick - bird-ish
 KIT_CH = bytearray([
 0b00000011,0b11000000,
 0b00001111,0b11110000,
@@ -302,7 +272,6 @@ KIT_CH = bytearray([
 0b00001111,0b11110000
 ])
 
-# Block - square tank
 KIT_BL = bytearray([
 0b00111111,0b11111000,
 0b01111111,0b11111100,
@@ -322,7 +291,6 @@ KIT_BL = bytearray([
 0b00011111,0b11110000
 ])
 
-# Rock - rounder tank
 KIT_RO = bytearray([
 0b00000111,0b11000000,
 0b00011111,0b11110000,
@@ -342,7 +310,6 @@ KIT_RO = bytearray([
 0b00000111,0b11000000
 ])
 
-# Admin - spooky-ish
 KIT_AD = bytearray([
 0b00000111,0b11000000,
 0b00011111,0b11110000,
@@ -362,7 +329,6 @@ KIT_AD = bytearray([
 0b00011111,0b11110000
 ])
 
-# Grass - leafy blob
 KIT_GR = bytearray([
 0b00000111,0b00000000,
 0b00001111,0b10000000,
@@ -382,7 +348,6 @@ KIT_GR = bytearray([
 0b00000111,0b00000000
 ])
 
-# Python - snake-ish
 KIT_PY = bytearray([
 0b00000011,0b11000000,
 0b00001111,0b11110000,
@@ -402,7 +367,6 @@ KIT_PY = bytearray([
 0b00001111,0b11110000
 ])
 
-# Micropython - tiny dodgy blob
 KIT_MP = bytearray([
 0b00000000,0b00000000,
 0b00000111,0b00000000,
@@ -422,7 +386,6 @@ KIT_MP = bytearray([
 0b00000000,0b00000000
 ])
 
-# Doggy - small dog
 KIT_DO = bytearray([
 0b00001111,0b00000000,
 0b00011111,0b10000000,
@@ -442,7 +405,6 @@ KIT_DO = bytearray([
 0b00001111,0b00000000
 ])
 
-# Meme - weird bat blob
 KIT_ME = bytearray([
 0b00000000,0b00000000,
 0b00011000,0b00110000,
@@ -462,7 +424,6 @@ KIT_ME = bytearray([
 0b00000000,0b00000000
 ])
 
-# Eri - big cat tank
 KIT_ER = bytearray([
 0b00011100,0b00111000,
 0b00111110,0b01111100,
@@ -482,9 +443,6 @@ KIT_ER = bytearray([
 0b00011100,0b00111000
 ])
 
-# -------------------------
-# KITMEN DATA / WILD TABLE
-# -------------------------
 kitmen_data = [
     {"name":"Mankey",   "max_hp":16, "atk":7, "def":3, "catch_rate":60,
      "dodge":0,  "sprite":KIT_MA, "special":"double_hit"},
@@ -529,9 +487,6 @@ WILD_TABLE = (
     [11]*1    # Eri ultra rare
 )
 
-# -------------------------
-# INVENTORY / CAUGHT
-# -------------------------
 inventory = {
     "Rocks": 20,
     "Heals": 3
@@ -540,9 +495,6 @@ inventory = {
 caught_flags = [0] * KITMEN_COUNT
 caught_counts = [0] * KITMEN_COUNT
 
-# -------------------------
-# BATTLE STATE
-# -------------------------
 battle = {
     "wild_id": 0,
     "wild_hp": 0,
@@ -555,13 +507,7 @@ battle = {
     "eviler": False,
     "eviler_index": -1
 }
-# =========================
-# PART 2 — SAVE / INTRO / STARTER / ENCOUNTERS / MOVEMENT
-# =========================
 
-# -------------------------
-# SAVE / LOAD
-# -------------------------
 def save_game():
     data = {
         "x": player["x"],
@@ -609,9 +555,6 @@ def new_game():
     evilers_defeated = 0
     GAME_STATE = "starter"
 
-# -------------------------
-# INTRO
-# -------------------------
 def draw_intro():
     thumby.display.fill(0)
     thumby.display.drawText("KITMEN", 18, 4, 1)
@@ -650,9 +593,6 @@ def update_intro():
         elif BTN_B.justPressed():
             intro_mode = "main"
 
-# -------------------------
-# STARTER SELECTION
-# -------------------------
 def draw_starter():
     thumby.display.fill(0)
     thumby.display.drawText("Choose Kitmen", 0, 0, 1)
@@ -687,9 +627,6 @@ def update_starter():
         caught_counts[chosen] += 1
         GAME_STATE = "overworld"
 
-# -------------------------
-# ENCOUNTERS
-# -------------------------
 def start_wild_encounter():
     global GAME_STATE
 
@@ -721,7 +658,6 @@ def start_eviler_encounter(ev_index):
     battle["eviler"] = True
     battle["eviler_index"] = ev_index
 
-    # Eviler uses Eri as base but scaled
     base = kitmen_data[11]
     scale = 1 + evilers_defeated
     battle["wild_id"] = 11
@@ -742,9 +678,6 @@ def start_eviler_encounter(ev_index):
 
     GAME_STATE = "battle"
 
-# -------------------------
-# MOVEMENT
-# -------------------------
 def try_move(dx, dy):
     global last_encounter_time
 
@@ -762,13 +695,12 @@ def try_move(dx, dy):
         player["walk_frame"] ^= 1
         player["walk_timer"] = 6
 
-        # Eviler trigger
         ev_index = check_eviler_trigger()
         if ev_index != -1:
             start_eviler_encounter(ev_index)
             return
 
-        # Wild encounter in tall grass
+
         if tile == 2:
             if time.ticks_ms() - last_encounter_time > 20000:
                 if random.randint(1, 12) == 1:
@@ -792,13 +724,7 @@ def update_player():
         player["walk_timer"] -= 1
 
     update_blink()
-# =========================
-# PART 3 — BATTLE HELPERS / LOGIC / RENDER (PATCHED)
-# =========================
 
-# -------------------------
-# BATTLE HELPERS
-# -------------------------
 def draw_hp_bar(x, y, cur, maxhp, width=40):
     if maxhp <= 0:
         return
@@ -814,11 +740,9 @@ def damage(attacker, defender):
     if base < 1:
         base = 1
 
-    # crit
     if random.randint(1, 10) == 1:
         base *= 2
 
-    # ±25% variation
     var = base // 4
     if var > 0:
         base = base + random.randint(-var, var)
@@ -875,15 +799,9 @@ def player_hit_wild():
 
     return "Hit " + str(dmg)
 
-# -------------------------
-# BATTLE LOGIC (PATCHED)
-# -------------------------
 def update_battle():
     update_buttons()
 
-    # -------------------------
-    # MESSAGE MODE (patched)
-    # -------------------------
     if battle["message_timer"] > 0:
         # A skips message
         if BTN_A.justPressed():
@@ -898,9 +816,6 @@ def update_battle():
             f()
         return
 
-    # -------------------------
-    # HEAL (B)
-    # -------------------------
     if BTN_B.justPressed():
         maxhp = kitmen_data[battle["player_id"]]["max_hp"]
         if inventory["Heals"] > 0 and battle["player_hp"] < maxhp:
@@ -913,25 +828,16 @@ def update_battle():
             battle["message_timer"] = 20
         return
 
-    # -------------------------
-    # MENU NAVIGATION
-    # -------------------------
     if BTN_L.justPressed():
         battle["menu_index"] = (battle["menu_index"] - 1) % 3
     elif BTN_R.justPressed():
         battle["menu_index"] = (battle["menu_index"] + 1) % 3
 
-    # -------------------------
-    # MENU ACTIONS
-    # -------------------------
     if BTN_A.justPressed():
         choice = battle["menu_index"]
         wild = kitmen_data[battle["wild_id"]]
         player_mon = kitmen_data[battle["player_id"]]
 
-        # -------------------------
-        # FIGHT
-        # -------------------------
         if choice == 0:
             msg = player_hit_wild()
             battle["message"] = msg
@@ -950,7 +856,6 @@ def update_battle():
                 battle["end_after"] = end_after
                 return
 
-            # Wild counterattack
             reply = wild_attack()
             battle["message"] = reply
             battle["message_timer"] = 30
@@ -963,9 +868,6 @@ def update_battle():
                     battle["player_hp"] = kitmen_data[battle["player_id"]]["max_hp"]
                 battle["end_after"] = end_after
 
-        # -------------------------
-        # CATCH
-        # -------------------------
         elif choice == 1:
             if battle["eviler"]:
                 battle["message"] = "Can't catch"
@@ -1012,9 +914,6 @@ def update_battle():
                     battle["player_hp"] = kitmen_data[battle["player_id"]]["max_hp"]
                 battle["end_after"] = end_after
 
-        # -------------------------
-        # RUN
-        # -------------------------
         elif choice == 2:
             if battle["eviler"]:
                 battle["message"] = "Can't run!"
@@ -1061,9 +960,6 @@ def update_battle():
                     battle["player_hp"] = kitmen_data[battle["player_id"]]["max_hp"]
                 battle["end_after"] = end_after
 
-# -------------------------
-# BATTLE RENDER
-# -------------------------
 def draw_battle_menu():
     options = ["F", "C", "R"]
     base_x = 6
@@ -1102,13 +998,6 @@ def draw_battle_screen():
 
     thumby.display.update()
 
-# =========================
-# PART 4 — MENUS / ITEMS+SELECTION / BOOK / MAIN LOOP (PATCHED)
-# =========================
-
-# -------------------------
-# ITEMS MENU (with Select Kitmen >)
-# -------------------------
 def draw_items_menu():
     thumby.display.fill(0)
     thumby.display.drawText("Items:", 0, 0, 1)
@@ -1136,12 +1025,9 @@ def update_items_menu():
         MENU_STATE = "main"
         return
 
-# -------------------------
-# SELECTION MENU (3 visible, centered scroll)
-# -------------------------
 selection_index = 0
 selection_scroll = 0
-selection_mode = "list"   # "list" or "detail"
+selection_mode = "list" 
 
 def get_selectable_ids():
     ids = []
@@ -1231,9 +1117,6 @@ def update_selection_menu():
             selection_mode = "list"
             return
 
-# -------------------------
-# BOOK MENU (Eviler now inside list)
-# -------------------------
 def draw_book_menu():
     thumby.display.fill(0)
     caught_total = sum(caught_counts)
@@ -1277,9 +1160,6 @@ def update_book_menu():
     if BTN_B.justPressed():
         MENU_STATE = "main"
 
-# -------------------------
-# SAVE MENU
-# -------------------------
 def draw_save_menu():
     thumby.display.fill(0)
     thumby.display.drawText("Saving...", 5, 10, 1)
@@ -1296,9 +1176,6 @@ def update_save_menu():
     if BTN_A.justPressed() or BTN_B.justPressed():
         MENU_STATE = "main"
 
-# -------------------------
-# MAIN MENU
-# -------------------------
 def draw_main_menu():
     thumby.display.fill(0)
     options = ["Items", "Book", "Save"]
@@ -1331,9 +1208,6 @@ def update_main_menu():
         GAME_STATE = "overworld"
         MENU_STATE = "none"
 
-# -------------------------
-# MENU ROUTER
-# -------------------------
 def update_menu():
     if MENU_STATE == "main":
         update_main_menu()
@@ -1361,9 +1235,6 @@ def draw_menu():
     elif MENU_STATE == "save":
         draw_save_menu()
 
-# -------------------------
-# MAIN LOOP
-# -------------------------
 def main():
     global GAME_STATE, last_encounter_time
 
