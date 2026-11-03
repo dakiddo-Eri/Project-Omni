@@ -18,6 +18,19 @@ except OSError:
 def _rstrip_newline(line):
     return line.rstrip("\r\n")
 
+def normalize_link_target(target):
+    if not isinstance(target, str):
+        return target
+    cleaned = target.strip()
+    lowered = cleaned.lower()
+    if lowered == "search":
+        return "SEARCH"
+    if lowered == "home" or lowered == "home.sit":
+        return "HOME"
+    if lowered == "back":
+        return "BACK"
+    return cleaned
+
 def parse_site(path):
     lines = []
     links = {}
@@ -273,7 +286,7 @@ def main_loop():
                 clicked_visible_idx = int(cy) // 8
                 clicked_actual_idx = clicked_visible_idx + scroll_offset
                 if clicked_actual_idx in page_links:
-                    target = page_links[clicked_actual_idx]
+                    target = normalize_link_target(page_links[clicked_actual_idx])
                     if target == "SEARCH":
                         query = open_keyboard()
                         if query:
