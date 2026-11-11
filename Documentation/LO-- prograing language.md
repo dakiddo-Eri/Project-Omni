@@ -28,7 +28,9 @@ T:------------
 T:Search
 L:SEARCH                                   this adds a hyperlink to the text to open the search bar
 T:Open Gooogle
-L:google.sit                               this adds a hyperlink to the text directing to another site
+L:google.sit
+T:------------
+little boy, little guy, im just a little dude                   this does nothinng due to no prefixes like "T:" being present first
 ```
 
 > Nested folders HAS to be directed to in the line. EX: L:/cool folder/news.sit
@@ -51,3 +53,9 @@ A:  J  J    |   L  L
   reads them one line at a time, but the whole parsed page still lives
   in RAM while you're on it, and the Original Thumby's flash storage
   is limited.
+
+## Random Notes
+
+- `.sit` files in the parent folder is indexed from searching but
+  `.sit` files in a nested folder is NOT indexed from searching 
+  (can only be accessed through link redirects)
