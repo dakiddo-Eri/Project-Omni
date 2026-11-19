@@ -12,8 +12,11 @@ T:Treat Wounds
 L:important-stuff/treat-wounds.sit
 T:Cool Spear
 L:important-stuff/spear.sit
-T:Fire 
+T:Make fire
 L:important-stuff/fire.sit
+T:Make shelter
+L:important-stuff/shelter.sit
+T:
 T:
 T:Disclaimer
 L:important-stuff/disclaimer.sit 

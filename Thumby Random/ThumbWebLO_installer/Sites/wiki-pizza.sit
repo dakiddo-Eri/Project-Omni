@@ -1,0 +1,42 @@
+# pizza_wiki.sit - The Pizza Wiki
+T:=== PIZZA ===
+T:------------
+T:1. OVERVIEW
+T:Flatbread
+T:with topping
+T:Origin:
+T:Italy.
+T:
+T:2. BASICS
+T:Dough base
+T:Tomato sauce
+T:Melted
+T:cheese.
+T:
+T:3. TOPPINGS
+T:Pepperoni
+T:Mushrooms
+T:Onions
+T:Sausage
+T:Peppers
+T:Olives
+T:
+T:4. STYLES
+T:Neapolitan
+T:New York
+T:Chicago
+T:Detroit
+T:
+T:5. FUN FACTS
+T:3 billion
+T:pizzas sold
+T:per year!
+T:
+T:First pizzerias
+T:used brick
+T:ovens.
+T:------------
+T:Back to Wiki
+L:wiki.sit
+T:Back Home
+L:HOME

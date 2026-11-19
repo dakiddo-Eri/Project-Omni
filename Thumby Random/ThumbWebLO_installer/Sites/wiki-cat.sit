@@ -1,0 +1,47 @@
+# cat_wiki.sit - The Cat Wiki
+T:=== CATS ===
+T:------------
+T:1. OVERVIEW
+T:Cats are
+T:felines.
+T:Family:
+T:Felidae.
+T:
+T:2. HABITAT
+T:Homes, streets
+T:and farms.
+T:
+T:3. ANATOMY
+T:Whiskers
+T:sense space.
+T:
+T:Retractable
+T:claws for
+T:climbing.
+T:
+T:Night vision
+T:is superb.
+T:
+T:4. DIET
+T:Carnivores!
+T:They eat:
+T:- Meat
+T:- Fish
+T:- Kibble
+T:
+T:5. SOUNDS
+T:Purr, meow,
+T:hiss, and
+T:yowl.
+T:
+T:6. FUN FACTS
+T:Sleep 12-16
+T:hours a day.
+T:
+T:Always land
+T:on feet!
+T:------------
+T:Back to Wiki
+L:wiki.sit
+T:Back Home
+L:HOME
