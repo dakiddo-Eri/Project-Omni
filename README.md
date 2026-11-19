@@ -71,5 +71,7 @@ Have ideas? Found bugs? Want to contribute?
 
 If you ever need a visual guide on installing things on here or anything like that, you can visit 'https://www.youtube.com/@EriZeDud21' to find some guides and other random stuff.
 
+Send any amount of Bitcoin to "bc1qlmhh4h8jxnqxl45av3ylzjd0f3jh7g2kru5fq8" and I'll be happey! :3
+
 
 *Created with ❤️ by Eri*
