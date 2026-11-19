@@ -67,6 +67,8 @@ Have ideas? Found bugs? Want to contribute?
 
 **Project Omni** — Great design at any scale
 
+[![Buy Me a Coffee](https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png)](https://www.buymeacoffee.com/dakiddoextf)
+
 If you ever need a visual guide on installing things on here or anything like that, you can visit 'https://www.youtube.com/@EriZeDud21' to find some guides and other random stuff.
 
 
