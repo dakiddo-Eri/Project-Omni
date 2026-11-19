@@ -108,7 +108,7 @@ def search(query):
                     break
 
     if count == 0:
-        return ["No results for", query[:12]], {}, {}
+        return ["No results", query[:12]], {}, {}
 
     return lines, links, {}
 
@@ -208,7 +208,7 @@ def load_file(rel_path):
     full = rel_path if rel_path[:1] == "/" else SITES_DIR + rel_path
     lines, links, animations, found = parse_site(full)
     if not found: #Eri tottaly watermark
-        return ["File missing:", rel_path[:12]], {}, {}
+        return ["No Results", rel_path[:12]], {}, {}
     return lines, links, animations
 
 def go_home():
@@ -217,7 +217,7 @@ def go_home():
     scroll_offset = 0
     try:
         lines, links, anims = load_file("home.sit")
-        if lines and lines[0] == "File missing:":
+        if lines and lines[0] == "No Results":
             lines, links, anims = build_directory_listing()
     except Exception:
         lines, links, anims = ["No files"], {}, {}
