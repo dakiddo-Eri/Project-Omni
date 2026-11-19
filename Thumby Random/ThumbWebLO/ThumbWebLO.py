@@ -2,7 +2,7 @@ import thumby
 import os
 import time
 import gc
-#Build:2013:2026:EC1.3:ETA:ERI
+#Build:2013:2027:EC1.4:ETA:ERI
 gc.collect()
 thumby.display.setFPS(30)
 
@@ -31,18 +31,41 @@ def normalize_link_target(target):
         return "BACK"
     return cleaned
 
+class _SiteLines:
+    def __init__(self, path, offsets):
+        self.offsets = offsets
+        self.file = open(path, "r")
+
+    def __len__(self):
+        return len(self.offsets)
+
+    def __getitem__(self, index):
+        if index < 0:
+            index += len(self.offsets)
+        if index < 0 or index >= len(self.offsets):
+            raise IndexError("site line index out of range")
+        self.file.seek(self.offsets[index])
+        raw = _rstrip_newline(self.file.readline())
+        if raw[:2] == "A:":
+            return raw[2:].split("|")[0]
+        return raw[2:]
+
+    def close(self):
+        self.file.close()
+
 def parse_site(path):
-    lines = []
+    offsets = []
     links = {}
     animations = {}
     
     try:
         f = open(path, "r")
     except OSError:
-        return lines, links, animations, False
+        return [], links, animations, False
 
     try:
         while True:
+            offset = f.tell()
             raw = f.readline()
             if not raw:
                 break
@@ -50,19 +73,19 @@ def parse_site(path):
             if not raw or raw[0] == "#":
                 continue
             if raw[:2] == "T:":
-                lines.append(raw[2:])
+                offsets.append(offset)
             elif raw[:2] == "A:":
                 frames = raw[2:].split("|")
-                lines.append(frames[0])
-                animations[len(lines) - 1] = frames
+                offsets.append(offset)
+                animations[len(offsets) - 1] = frames
             elif raw[:2] == "L:":
-                idx = len(lines) - 1
+                idx = len(offsets) - 1
                 if idx >= 0:
                     links[idx] = raw[2:]
     finally:
         f.close()
 
-    return lines, links, animations, True
+    return _SiteLines(path, offsets), links, animations, True
 
 def search(query):
     q = query.lower()
@@ -115,6 +138,12 @@ current_req = None
 page_lines = []
 page_links = {}
 page_animations = {}
+
+def _set_page(lines, links, animations):
+    global page_lines, page_links, page_animations
+    if isinstance(page_lines, _SiteLines):
+        page_lines.close()
+    page_lines, page_links, page_animations = lines, links, animations
 
 keyboard = (
     "qwertyuiop",
@@ -192,7 +221,7 @@ def go_home():
             lines, links, anims = build_directory_listing()
     except Exception:
         lines, links, anims = ["No files"], {}, {}
-    page_lines, page_links, page_animations = lines, links, anims
+    _set_page(lines, links, anims)
 
 def _load_page(kind, value):
     try:
@@ -206,15 +235,17 @@ def navigate(kind, value):
     global current_req, page_lines, page_links, page_animations, scroll_offset
     if current_req is not None:
         history.append(current_req)
+        if len(history) > 20:
+            history.pop(0)
     current_req = (kind, value)
-    page_lines, page_links, page_animations = _load_page(kind, value)
+    _set_page(*_load_page(kind, value))
     scroll_offset = 0
 
 def go_back():
     global current_req, page_lines, page_links, page_animations, scroll_offset
     if history:
         current_req = history.pop()
-        page_lines, page_links, page_animations = _load_page(*current_req)
+        _set_page(*_load_page(*current_req))
         scroll_offset = 0
     else:
         go_home()
