@@ -12,6 +12,7 @@ Do not open a public issue for a security vulnerability. Include as much relevan
 - Proof of concept, if available
 - Any known impact or mitigation
 - If to your knowledge, anyone else knows about this
+- Your GitHub user
 
 The report should remain private until the vulnerability has been assessed and a fix or other appropriate response is available.
 
@@ -24,6 +25,8 @@ Only the latest released version of a Project Omni component is guaranteed to re
 Please give maintainers a reasonable amount of time to investigate and resolve the issue before publicly disclosing it. Avoid accessing, modifying, or deleting data that does not belong to you, and do not disrupt project services while researching a vulnerability.
 
 ## Notes
+
+Vulnerabilities are pioritzed on how much it affects us and users.
 
 Please do not blackmail us (obviously), spam emails for updates, or ask community members for updates on your security vulnerability. We will try to keep you updated on your security vulnerability as best as possible.
 
